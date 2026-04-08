@@ -31,6 +31,15 @@
             "parameters": {},
             "additionalParameters": "allowed"
           }
+        },
+        "zshoppping-display": {
+          "semanticObject": "zshoppping",
+          "action": "display",
+          "title": "{{zshoppping-display.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
         }
       }
     }

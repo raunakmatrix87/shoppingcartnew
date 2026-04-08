@@ -4,8 +4,8 @@
   "routes": [
     {
       "source": "^/browser/(.*)$",
-      "target": "/$1",
-      "destination": "DMSDestination",
+      "target": "/browser/$1",
+      "destination": "SAPBTPDMSDestination",
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },

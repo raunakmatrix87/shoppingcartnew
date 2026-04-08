@@ -21,11 +21,12 @@
     "undeploy": "cf undeploy sapuidemocart --delete-services --delete-service-keys --delete-service-brokers"
   },
   "devDependencies": {
-    "@ui5/cli": "^4.0.0",
+    "@sap/cds-dk": "^9",
     "@sap/ux-ui5-tooling": "1",
+    "@ui5/cli": "^4.0.0",
+    "mbt": "^1.2.29",
     "rimraf": "6.0.1",
-    "ui5-task-zipper": "^3.4.x",
-    "mbt": "^1.2.29"
+    "ui5-task-zipper": "^3.4.x"
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "keywords": [
