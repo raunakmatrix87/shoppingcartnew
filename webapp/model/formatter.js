@@ -33,13 +33,15 @@ sap.ui.define([
 		 */
 		async totalPrice(oCartEntries) {
 			let fTotalPrice = 0;
+			let sCurrency = "";
 			Object.keys(oCartEntries).forEach((sProductId) => {
 				const oProduct = oCartEntries[sProductId];
 				fTotalPrice += parseFloat(oProduct.Price) * oProduct.Quantity;
+				sCurrency = sCurrency || oProduct.CurrencyCode || oProduct.DisplayUnit || "EUR";
 			});
 
 			return (await this.requestResourceBundle())
-				.getText("cartTotalPrice", [formatter.price(fTotalPrice), "EUR"]);
+				.getText("cartTotalPrice", [formatter.price(fTotalPrice), sCurrency || "EUR"]);
 		},
 
 		/**
@@ -74,6 +76,9 @@ sap.ui.define([
 		 */
 		pictureUrl(sUrl) {
 			if (sUrl){
+				if (/^(sap-icon:\/\/|https?:\/\/|data:|\/)/.test(sUrl)) {
+					return sUrl;
+				}
 				return sap.ui.require.toUrl(sUrl);
 			} else {
 				return undefined;

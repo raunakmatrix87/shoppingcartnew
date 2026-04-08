@@ -17,22 +17,18 @@ sap.ui.define([
 			const oContainer = this.byId("comparisonContainer");
 			const oParameters = oEvent.getParameter("arguments");
 			const oPlaceholder = this.byId("placeholder");
-
-			// save category and current products
-			this.getModel("comparison").setProperty("/category", oParameters.id);
-			this.getModel("comparison").setProperty("/item1", oParameters.item1Id);
-			this.getModel("comparison").setProperty("/item2", oParameters.item2Id);
-
-			// update the comparison panels
-			oPlaceholder.setVisible(false);
-			updatePanel(0, oParameters.item1Id);
-			updatePanel(1, oParameters.item2Id);
-
-			// helper function to update the panel binding
-			function updatePanel(iWhich, sId) {
+			const fnUpdatePanel = (iWhich, sId) => {
 				const oPanel = oContainer.getItems()[iWhich];
-				if (sId){
-					const sPath = `/Products('${sId}')`;
+				const sPath = this.getOwnerComponent().getProductPathById(sId);
+
+				if (sId) {
+					if (!sPath) {
+						oPanel.unbindElement();
+						oPanel.setVisible(false);
+						oPlaceholder.setVisible(true);
+						return;
+					}
+
 					oPanel.bindElement({
 						path: sPath
 					});
@@ -42,7 +38,17 @@ sap.ui.define([
 					oPanel.setVisible(false);
 					oPlaceholder.setVisible(true);
 				}
-			}
+			};
+
+			// save category and current products
+			this.getModel("comparison").setProperty("/category", oParameters.id);
+			this.getModel("comparison").setProperty("/item1", oParameters.item1Id);
+			this.getModel("comparison").setProperty("/item2", oParameters.item2Id);
+
+			// update the comparison panels
+			oPlaceholder.setVisible(false);
+			fnUpdatePanel(0, oParameters.item1Id);
+			fnUpdatePanel(1, oParameters.item2Id);
 		},
 
 		onRemoveComparison(oEvent){

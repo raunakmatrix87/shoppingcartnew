@@ -40,33 +40,26 @@ sap.ui.define([
 				this._setLayout(bSmallScreen ? "One" : "Two");
 			}
 
-			const oModel = this.getModel();
-			this._loadSuppliers();
-			const oProductList = this.byId("productList");
-			const oBinding = oProductList.getBinding("items");
-			oBinding.attachDataReceived(this.fnDataReceived, this);
 			const sId = oEvent.getParameter("arguments").id;
 			this._sProductId = oEvent.getParameter("arguments").productId;
-			// the binding should be done after insuring that the metadata is loaded successfully
-			oModel.metadataLoaded().then(() => {
-				const oView = this.getView(),
-					sPath = "/" + this.getModel().createKey("ProductCategories", {
-					Category: sId
-				});
+			const oComponent = this.getOwnerComponent();
+
+			oComponent.dataLoaded().then(() => {
+				const oView = this.getView();
+				const sPath = oComponent.getCategoryPathById(sId);
+
+				if (!sPath) {
+					this.getRouter().getTargets().display("notFound");
+					return;
+				}
+
+				oView.setBusy(true);
 				oView.bindElement({
-					path: sPath,
-					parameters: {
-						expand: "Products"
-					},
-					events: {
-						dataRequested() {
-							oView.setBusy(true);
-						},
-						dataReceived() {
-							oView.setBusy(false);
-						}
-					}
+					path: sPath
 				});
+				oView.setBusy(false);
+				this._loadSuppliers();
+				this.byId("productList").attachEventOnce("updateFinished", this.fnDataReceived, this);
 			});
 		},
 
@@ -74,27 +67,12 @@ sap.ui.define([
 		 * Create a unique array of suppliers to be used in the supplier filter option.
 		 */
 		_loadSuppliers() {
-			const oModel = this.getModel();
-			oModel.read("/Products", {
-				success: (oData) => {
-					const aProducts = oData.results,
-						aSuppliers = [];
+			const aProducts = this.getView().getBindingContext()?.getProperty("Products") || [];
+			const aUniqueSuppliers = [...new Set(aProducts.map((oProduct) => oProduct.SupplierName).filter(Boolean))]
+				.sort()
+				.map((sSupplierName) => ({SupplierName: sSupplierName}));
 
-					aProducts.forEach((oProduct) => {
-						aSuppliers.push(oProduct.SupplierName);
-					});
-					// remove duplications from the suppliers array and sort it
-					const aUniqueSuppliers = aSuppliers.filter((sName, iIndex, aUniqueSuppliers) => {
-						return aUniqueSuppliers.indexOf(sName) === iIndex;
-					}).sort();
-
-					// create the unique suppliers array as array of of objects
-					aUniqueSuppliers.map((sSupplierName, iIndex, aUniqueSuppliers) => {
-						aUniqueSuppliers[iIndex] = {SupplierName: sSupplierName};
-					});
-					this.getModel("view").setProperty("/Suppliers", aUniqueSuppliers);
-				}
-			});
+			this.getModel("view").setProperty("/Suppliers", aUniqueSuppliers);
 			this._clearComparison();
 		},
 
@@ -102,7 +80,9 @@ sap.ui.define([
 			const oList = this.byId("productList");
 			const aListItems = oList.getItems();
 			aListItems.some((oItem) => {
-				if (oItem.getBindingContext().getPath() === `/Products('${this._sProductId}')`) {
+				const oObject = oItem.getBindingContext().getObject();
+
+				if (oObject.ProductId === this._sProductId) {
 					oList.setSelectedItem(oItem);
 					return true;
 				}

@@ -95,7 +95,7 @@
 							path : 'cartProducts>Price',
 							formatter : '.formatter.price'
 						}"
-						numberUnit="EUR"
+						numberUnit="{cartProducts>CurrencyCode}"
 						press=".onEntryListPress"
 						iconDensityAware="false">
 						<attributes>
@@ -152,7 +152,7 @@
 							path : 'cartProducts>Price',
 							formatter : '.formatter.price'
 						}"
-						numberUnit="EUR"
+						numberUnit="{cartProducts>CurrencyCode}"
 						press=".onEntryListPress"
 						iconDensityAware="false">
 						<attributes>

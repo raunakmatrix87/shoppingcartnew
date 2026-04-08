@@ -47,7 +47,7 @@
 						path : 'Price',
 						formatter : '.formatter.price'
 					}"
-					numberUnit="EUR">
+					numberUnit="{DisplayUnit}">
 				</ObjectListItem>
 				<ObjectStatus
 					class="sapUiSmallMarginBottom"
@@ -81,24 +81,24 @@
 			</form:layout>
 			<form:formContainers>
 				<form:FormContainer>
-					<form:FormElement label="{i18n>productSupplierAttributeText}">
+					<form:FormElement label="{i18n>productModifiedByAttributeText}">
 						<form:fields>
-							<Text text="{SupplierName}"/>
+							<Text text="{LastModifiedBy}"/>
 						</form:fields>
 					</form:FormElement>
-					<form:FormElement label="{i18n>productDescriptionAttributeText}">
+					<form:FormElement label="{i18n>productRepositoryAttributeText}">
 						<form:fields>
-							<Text text="{ShortDescription}"/>
+							<Text text="{RepositoryName}"/>
 						</form:fields>
 					</form:FormElement>
-					<form:FormElement label="{i18n>productWeightAttributeText}">
+					<form:FormElement label="{i18n>productMimeTypeAttributeText}">
 						<form:fields>
-							<Text text="{Weight} {WeightUnit}"/>
+							<Text text="{MimeType}"/>
 						</form:fields>
 					</form:FormElement>
-					<form:FormElement label="{i18n>productMeasuresAttributeText}">
+					<form:FormElement label="{i18n>productLastModifiedAttributeText}">
 						<form:fields>
-							<Text text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
+							<Text text="{LastModificationDate}"/>
 						</form:fields>
 					</form:FormElement>
 				</form:FormContainer>

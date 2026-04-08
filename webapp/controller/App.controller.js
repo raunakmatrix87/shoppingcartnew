@@ -7,7 +7,7 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.demo.cart.controller.App", {
 		onInit() {
 			const oViewModel = new JSONModel({
-				busy: false,
+				busy: true,
 				delay: 0,
 				layout: "TwoColumnsMidExpanded",
 				smallScreenMode: true
@@ -20,9 +20,7 @@ sap.ui.define([
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			};
 
-			// since then() has no "reject"-path attach to the MetadataFailed-Event to disable the busy indicator in case of an error
-			// this.getOwnerComponent().getModel().metadataLoaded().then(fnSetAppNotBusy);
-			// this.getOwnerComponent().getModel().attachMetadataFailed(fnSetAppNotBusy);
+			this.getOwnerComponent().dataLoaded().finally(fnSetAppNotBusy);
 
 			// apply content density mode to root view
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());

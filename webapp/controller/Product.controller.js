@@ -21,39 +21,31 @@ sap.ui.define([
 		_routePatternMatched(oEvent) {
 			const sId = oEvent.getParameter("arguments").productId;
 			const oView = this.getView();
-			const oModel = oView.getModel();
-			// the binding should be done after insuring that the metadata is loaded successfully
-			oModel.metadataLoaded().then(() => {
-				const sPath = "/" + this.getModel().createKey("Products", {
-					ProductId: sId
-				});
-				oView.bindElement({
-					path: sPath,
-					events: {
-						dataRequested() {
-							oView.setBusy(true);
-						},
-						dataReceived() {
-							oView.setBusy(false);
-						}
-					}
-				});
-				const oData = oModel.getProperty(sPath);
-				//if there is no data the model has to request new data
-				if (!oData) {
-					oView.setBusyIndicatorDelay(0);
-					oView.getElementBinding().attachEventOnce("dataReceived", () => {
-						// reset to default
-						oView.setBusyIndicatorDelay(null);
-						this._checkIfProductAvailable(sPath);
-					});
+			const oComponent = this.getOwnerComponent();
+
+			oComponent.dataLoaded().then(() => {
+				const sPath = oComponent.getProductPathById(sId);
+
+				if (!sPath) {
+					this._router.getTargets().display("notFound");
+					return;
 				}
+
+				oView.bindElement({
+					path: sPath
+				});
+				this._checkIfProductAvailable(sPath);
 			});
 		},
 
 		fnUpdateProduct(productId) {
-			const sPath = `/Products('${productId}')`;
+			const sPath = this.getOwnerComponent().getProductPathById(productId);
 			const fnCheck = () => this._checkIfProductAvailable(sPath);
+
+			if (!sPath) {
+				this._router.getTargets().display("notFound");
+				return;
+			}
 
 			this.getView().bindElement({
 				path: sPath,
@@ -77,7 +69,7 @@ sap.ui.define([
 		 * Navigate to the generic cart view
 		 * @param {sap.ui.base.Event} oEvent the button press event
 		 */
-		onToggleCart(oEvent) {
+		async onToggleCart(oEvent) {
 			const oEntry = this.getView().getBindingContext().getObject();
 			const bPressed = oEvent.getParameter("pressed");
 

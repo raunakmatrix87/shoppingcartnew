@@ -60,20 +60,15 @@
 					path : 'Price',
 					formatter : '.formatter.price'
 				}"
-				numberUnit="EUR">
+				numberUnit="{CurrencyCode}"
+				intro="{CategoryName}">
 				<attributes>
 					<ObjectAttribute
 						title="{i18n>productSupplierAttributeText}"
-						text="{SupplierName}"/>
+						text="{Brand}"/>
 					<ObjectAttribute
-						title="{i18n>productDescriptionAttributeText}"
-						text="{ShortDescription}"/>
-					<ObjectAttribute
-						title="{i18n>productWeightAttributeText}"
-						text="{Weight} {WeightUnit}"/>
-					<ObjectAttribute
-						title="{i18n>productMeasuresAttributeText}"
-						text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
+						title="Currency"
+						text="{CurrencyCode}"/>
 				</attributes>
 				<statuses>
 					<ObjectStatus

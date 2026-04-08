@@ -29,8 +29,7 @@ sap.ui.define([
 				welcomeCarouselCreditCard: 'sap/ui/demo/cart/img/CreditCard_277268.jpg',
 				Promoted: [],
 				Viewed: [],
-				Favorite: [],
-				Currency: "EUR"
+				Favorite: []
 			});
 			this.getView().setModel(oViewModel, "view");
 			this.getRouter().attachRouteMatched(this._onRouteMatched, this);
@@ -59,20 +58,15 @@ sap.ui.define([
 			if (sRouteName !== "product" && sRouteName !== "cartProduct") {
 				const aPromotedData = this.getView().getModel("view").getProperty("/Promoted");
 				if (!aPromotedData.length) {
-					const oModel = this.getModel();
-					Object.keys(this._mFilters).forEach((sFilterKey) => {
-						oModel.read("/FeaturedProducts", {
-							urlParameters: {
-								"$expand": "Product"
-							},
-							filters: this._mFilters[sFilterKey],
-							success: (oData) => {
-								this.getModel("view").setProperty(`/${sFilterKey}`, oData.results);
-								if (sFilterKey === "Promoted") {
-									this._selectPromotedItems();
-								}
-							}
-						});
+					this.getOwnerComponent().dataLoaded().then(() => {
+						const aProducts = this.getModel().getProperty("/Products") || [];
+						const aValidProducts = aProducts.filter((oProduct) => oProduct && oProduct.Name);
+						const aWrappedProducts = aValidProducts.map((oProduct) => ({Product: oProduct}));
+
+						this.getModel("view").setProperty("/Promoted", aWrappedProducts.slice(0, 2));
+						this.getModel("view").setProperty("/Viewed", aWrappedProducts.slice(2, 8));
+						this.getModel("view").setProperty("/Favorite", aWrappedProducts.slice(8, 14));
+						this._selectPromotedItems();
 					});
 				}
 			}
@@ -119,9 +113,9 @@ sap.ui.define([
 		 */
 		async onAddToCart(oEvent) {
 			const oResourceBundle = await this.getModel("i18n").getResourceBundle();
-			const oProduct = oEvent.getSource().getBindingContext("view").getObject();
+			const oProduct = oEvent.getSource().getBindingContext("view").getObject().Product;
 			const oCartModel = this.getModel("cartProducts");
-			cart.addToCart(oResourceBundle, oProduct, oCartModel);
+			await cart.addToCart(oResourceBundle, oProduct, oCartModel);
 		},
 
 		/**
@@ -139,8 +133,12 @@ sap.ui.define([
 		 * Select two random elements from the promoted products array.
 		 */
 		_selectPromotedItems() {
-			let iRandom1;
 			const aPromotedItems = this.getView().getModel("view").getProperty("/Promoted");
+			if (aPromotedItems.length <= 2) {
+				return;
+			}
+
+			let iRandom1;
 			const iRandom2 = Math.floor(Math.random() * aPromotedItems.length);
 			do {
 				iRandom1 = Math.floor(Math.random() * aPromotedItems.length);

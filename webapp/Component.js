@@ -2,8 +2,10 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"./model/LocalStorageModel",
 	"./model/models",
-	"sap/ui/Device"
-], (UIComponent, LocalStorageModel, models, Device) => {
+	"sap/ui/Device",
+	"sap/ui/model/json/JSONModel",
+	"./model/repositoryData"
+], (UIComponent, LocalStorageModel, models, Device, JSONModel, repositoryData) => {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
@@ -39,6 +41,28 @@ sap.ui.define([
 			// call the base component's init function and create the App view
 			UIComponent.prototype.init.apply(this, arguments);
 
+			const oRepositoryModel = new JSONModel({
+				ProductCategories: [],
+				Products: []
+			});
+			this.setModel(oRepositoryModel);
+			this._mCategoryPathsById = {};
+			this._mProductPathsById = {};
+			 	const sAppId = this.getManifestEntry("/sap.app/id");
+			const sAppPath = sAppId.replaceAll(".", "/");
+			const sAppModulePath = jQuery.sap.getModulePath(sAppPath);
+			this._pRepositoryDataLoaded = repositoryData.load(sAppModulePath).then((oRepositoryData) => {
+				oRepositoryModel.setData(oRepositoryData.data);
+				this._mCategoryPathsById = oRepositoryData.categoryPathsById;
+				this._mProductPathsById = oRepositoryData.productPathsById;
+			}).catch((oError) => {
+				oRepositoryModel.setData({
+					ProductCategories: [],
+					Products: [],
+					error: oError.message
+				});
+			});
+
 			// initialize the router
 			this.getRouter().initialize();
 
@@ -49,6 +73,18 @@ sap.ui.define([
 					document.title = sTitle;
 				});
 			});
+		},
+
+		dataLoaded() {
+			return this._pRepositoryDataLoaded || Promise.resolve();
+		},
+
+		getCategoryPathById(sCategoryId) {
+			return this._mCategoryPathsById?.[sCategoryId];
+		},
+
+		getProductPathById(sProductId) {
+			return this._mProductPathsById?.[sProductId];
 		},
 
 		/**

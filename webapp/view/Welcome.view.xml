@@ -182,12 +182,12 @@
 										number="{
 											parts:[
 												{path:'view>Product/Price'},
-												{path:'view>/Currency'}
+												{path:'view>Product/CurrencyCode'}
 											],
 											type: 'CurrencyType',
 											formatOptions:{showMeasure: false}
 										}"
-										numberUnit="{view>/Currency}">
+										numberUnit="{view>Product/CurrencyCode}">
 										<layoutData>
 											<l:GridData span="XL8 L8 M8 S8"/>
 										</layoutData>
@@ -270,12 +270,12 @@
 										number="{
 											parts:[
 												{path:'view>Product/Price'},
-												{path:'view>/Currency'}
+												{path:'view>Product/CurrencyCode'}
 											],
 											type: 'CurrencyType',
 											formatOptions:{showMeasure: false}
 										}"
-										numberUnit="{view>/Currency}">
+										numberUnit="{view>Product/CurrencyCode}">
 										<layoutData>
 											<l:GridData span="XL8 L8 M8 S8"/>
 										</layoutData>
@@ -358,12 +358,12 @@
 										number="{
 											parts:[
 												{path:'view>Product/Price'},
-												{path:'view>/Currency'}
+												{path:'view>Product/CurrencyCode'}
 											],
 											type: 'CurrencyType',
 											formatOptions:{showMeasure: false}
 										}"
-										numberUnit="{view>/Currency}">
+										numberUnit="{view>Product/CurrencyCode}">
 										<layoutData>
 											<l:GridData span="XL8 L8 M8 S8"/>
 										</layoutData>

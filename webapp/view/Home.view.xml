@@ -66,7 +66,7 @@
 							path : 'Price',
 							formatter : '.formatter.price'
 						}"
-						numberUnit="EUR"
+						numberUnit="{DisplayUnit}"
 						press=".onProductListItemPress"
 						iconDensityAware="false">
 						<attributes>
